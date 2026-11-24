@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProgramKerja extends Model
 {
@@ -27,6 +28,11 @@ class ProgramKerja extends Model
         'pagu_anggaran' => 'integer',
         'progres_persen' => 'integer',
     ];
+
+    public function transaksis(): HasMany
+    {
+        return $this->hasMany(TransaksiKas::class, 'program_kerja_id');
+    }
 
     /**
      * Get prefix acronym for badge (e.g. KL for KL-01, PS for PS-02).
