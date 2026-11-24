@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KEMUDI KBMDSI - Live Interactive Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b1319;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .preview-frame {
+      width: 1512px;
+      height: 982px;
+      border: 1px solid #1e293b;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #f8fafc;
+      transform-origin: top center;
+      transition: transform 0.2s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Control Bar -->
+  <header class="sticky top-0 z-50 bg-[#0d1720]/95 backdrop-blur-md border-b border-slate-800 px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#004737] to-emerald-500 flex items-center justify-center text-white font-bold shadow-md">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold text-white text-sm tracking-wide">KEMUDI HUB</span>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">FINAL UI/UX</span>
+        </div>
+        <p class="text-[11px] text-slate-400">Kabinet Imaginera 2026/2027 — KBMDSI FILKOM UB</p>
+      </div>
+    </div>
+
+    <!-- Tab Switcher -->
+    <div class="flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-700/80">
+      <button onclick="switchView('proker')" id="tab-proker" 
+              class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-[#004737] text-white shadow-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path><path d="m9 16 2 2 4-4"></path></svg>
+        <span>1. Manajemen Proker</span>
+      </button>
+
+      <button onclick="switchView('kas')" id="tab-kas" 
+              class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 text-slate-400 hover:text-white">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg>
+        <span>2. Kas & Keuangan</span>
+      </button>
+    </div>
+
+    <!-- Zoom & Mode Controls -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg p-1 text-xs">
+        <button onclick="setZoom(0.75)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 font-bold">75%</button>
+        <button onclick="setZoom(0.85)" class="px-2 py-1 rounded hover:bg-slate-800 text-slate-300 font-bold">85%</button>
+        <button onclick="setZoom(1.0)" class="px-2 py-1 rounded hover:bg-slate-800 text-emerald-400 font-bold">100%</button>
+      </div>
+
+      <a id="direct-link" href="proker_preview.html" target="_blank" 
+         class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors">
+        <span>Buka Layar Penuh ↗</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Viewport Area -->
+  <main class="flex-1 flex justify-center p-6 overflow-auto">
+    <div id="frame-wrapper" class="flex justify-center" style="width: 1512px;">
+      <iframe id="preview-iframe" src="proker_preview.html" class="preview-frame" style="transform: scale(0.85);"></iframe>
+    </div>
+  </main>
+
+  <script>
+    let currentZoom = 0.85;
+
+    function switchView(tab) {
+      const iframe = document.getElementById('preview-iframe');
+      const tabProker = document.getElementById('tab-proker');
+      const tabKas = document.getElementById('tab-kas');
+      const directLink = document.getElementById('direct-link');
+
+      if (tab === 'proker') {
+        iframe.src = 'proker_preview.html';
+        directLink.href = 'proker_preview.html';
+        tabProker.className = 'px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-[#004737] text-white shadow-sm';
+        tabKas.className = 'px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 text-slate-400 hover:text-white';
+      } else {
+        iframe.src = 'kas_preview.html';
+        directLink.href = 'kas_preview.html';
+        tabKas.className = 'px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 bg-[#004737] text-white shadow-sm';
+        tabProker.className = 'px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 text-slate-400 hover:text-white';
+      }
+    }
+
+    function setZoom(scale) {
+      currentZoom = scale;
+      const iframe = document.getElementById('preview-iframe');
+      iframe.style.transform = `scale(${scale})`;
+    }
+
+    // Auto fit based on screen width on load
+    window.addEventListener('load', () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 1550) {
+        const optimalScale = Math.max(0.6, (screenWidth - 80) / 1512);
+        setZoom(optimalScale);
+      }
+    });
+  </script>
+
+</body>
+</html>
